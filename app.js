@@ -312,15 +312,27 @@ async function sendMessage() {
   sendButton.innerHTML = "Sending…";
 
   try {
-    const response = await fetch("/api/send", {
+    const configElement = $("#web3forms-config");
+    const accessKey = configElement ? JSON.parse(configElement.textContent).accessKey : "";
+    if (!accessKey) throw new Error("Email delivery is not configured");
+
+    const response = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ to, subject, message: body })
+      body: JSON.stringify({
+        access_key: accessKey,
+        from_name: "Not Gmail",
+        email: to,
+        subject: `[Not Gmail] ${subject}`,
+        intended_recipient: to,
+        message: body || "(empty message)",
+        botcheck: ""
+      })
     });
     const result = await response.json().catch(() => ({}));
 
     if (!response.ok || !result.success) {
-      throw new Error(result.message || "Message could not be sent");
+      throw new Error(result.message || "Web3Forms could not deliver the message");
     }
 
   messages.unshift({

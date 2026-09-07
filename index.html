@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8fafd">
+  <title>Inbox (12) - Demo Mail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true">
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><path d="m15.5 14 5 5-1.5 1.5-5-5v-.8l-.3-.3a6.5 6.5 0 1 1 1.4-1.4l.4.3v.7ZM5 9.5A4.5 4.5 0 1 0 14 9.5a4.5 4.5 0 0 0-9 0Z"/></symbol>
+    <symbol id="i-tune" viewBox="0 0 24 24"><path d="M3 7h10v2H3zm14 0h4v2h-4zM13 5h4v6h-4zM3 15h4v2H3zm8 0h10v2H11zm-4-2h4v6H7z"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2zm1-16a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm0-14a4 4 0 0 0-4 4h2a2 2 0 1 1 3.2 1.6c-1.3.9-2.2 1.7-2.2 3.4h2c0-.9.4-1.3 1.4-2A4 4 0 0 0 12 6Z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="m19.4 13 .1-1-.1-1 2.1-1.6-2-3.5-2.5 1a8 8 0 0 0-1.7-1L15 3h-4l-.4 2.7c-.6.3-1.2.6-1.7 1l-2.5-1-2 3.5L6.6 11l-.1 1 .1 1-2.1 1.6 2 3.5 2.5-1a8 8 0 0 0 1.7 1L11 21h4l.4-2.7c.6-.3 1.2-.6 1.7-1l2.5 1 2-3.5-2.2-1.8ZM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/></symbol>
+    <symbol id="i-apps" viewBox="0 0 24 24"><path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 9h-4l-2 3h-4l-2-3H4V6h16v7Z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 17.3-6.2 3.8 1.7-7.1L2 9.2l7.2-.6L12 2l2.8 6.6 7.2.6-5.5 4.8 1.7 7.1z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.2 14.2L11 13V7h2v5l4.2 2.6-1 1.6Z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M2 21 23 12 2 3v7l15 2-15 2z"/></symbol>
+    <symbol id="i-draft" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Zm0 2 4 4h-4ZM8 13h8v2H8Zm0 4h6v2H8Z"/></symbol>
+    <symbol id="i-label" viewBox="0 0 24 24"><path d="M17.6 5.8A2 2 0 0 0 16 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 1.6-.8L22 12l-4.4-6.2ZM16 17H5V7h11l3.6 5z"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7.4 8.6 4.6 4.6 4.6-4.6L18 10l-6 6-6-6z"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><path d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.7-4.2L13 11h8V3z"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20z"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="m12 4-1.4 1.4 5.6 5.6H4v2h12.2l-5.6 5.6L12 20l8-8z"/></symbol>
+    <symbol id="i-archive" viewBox="0 0 24 24"><path d="M20.5 5.5 19 3H5L3.5 5.5A3 3 0 0 0 3 7v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a3 3 0 0 0-.5-1.5ZM6.2 5h11.6l.6 1H5.6zM19 19H5V8h14zm-4-7h-2v-2h-2v2H9l3 3z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zm3-9h2v8H9zm4 0h2v8h-2zm2.5-6-1-1h-5l-1 1H5v2h14V4z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5z"/></symbol>
+    <symbol id="i-snooze" viewBox="0 0 24 24"><path d="M7.9 3.5 6.5 2.1 2.1 6.5l1.4 1.4zM21.9 6.5l-4.4-4.4-1.4 1.4 4.4 4.4zM12 4a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm3.8 12.2L11 13V7h2v5l3.8 2.6z"/></symbol>
+    <symbol id="i-report" viewBox="0 0 24 24"><path d="M15.7 3H8.3L3 8.3v7.4L8.3 21h7.4l5.3-5.3V8.3zM13 17h-2v-2h2zm0-4h-2V7h2z"/></symbol>
+    <symbol id="i-primary" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5z"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.6 13.6 11 4H4v7l9.6 9.6a2 2 0 0 0 2.8 0l4.2-4.2a2 2 0 0 0 0-2.8ZM7.5 9A1.5 1.5 0 1 1 9 7.5 1.5 1.5 0 0 1 7.5 9Z"/></symbol>
+    <symbol id="i-people" viewBox="0 0 24 24"><path d="M16 11c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3ZM8 11c1.7 0 3-1.3 3-3S9.7 5 8 5 5 6.3 5 8s1.3 3 3 3Zm8 2c-2 0-6 1-6 3v3h12v-3c0-2-4-3-6-3ZM8 13c-2.3 0-6 1.2-6 3.5V19h6v-3c0-.9.4-1.7 1.2-2.4L8 13Z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><path d="M11 17h2v-6h-2zm1-15a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm-1-11h2V7h-2z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18.3 5.7 12 10.6 5.7 5.7 4.3 7.1l6.3 4.9-6.3 4.9 1.4 1.4 6.3-4.9 6.3 4.9 1.4-1.4-6.3-4.9 6.3-4.9z"/></symbol>
+    <symbol id="i-popout" viewBox="0 0 24 24"><path d="M19 19H5V5h5V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5h-2zM14 3v2h3.6l-9.2 9.2 1.4 1.4L19 6.4V10h2V3z"/></symbol>
+    <symbol id="i-attach" viewBox="0 0 24 24"><path d="M16.5 6.5v10a4.5 4.5 0 0 1-9 0V5a3 3 0 0 1 6 0v10.5a1.5 1.5 0 0 1-3 0V6H9v9.5a3 3 0 0 0 6 0V5a4.5 4.5 0 0 0-9 0v11.5a6 6 0 0 0 12 0v-10z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14h18V6a2 2 0 0 0-2-2Zm0 14H5V9h14z"/></symbol>
+    <symbol id="i-keep" viewBox="0 0 24 24"><path d="M17 3H7a2 2 0 0 0-2 2v14l7-3 7 3V5a2 2 0 0 0-2-2Z"/></symbol>
+    <symbol id="i-task" viewBox="0 0 24 24"><path d="M11 7H5v2h6zm0 4H5v2h6zm0 4H5v2h6zm3.6-7.4L16 9l4-4-1.4-1.4L16 6.2l-1.4-1.4L13.2 6.2zm0 8L16 17l4-4-1.4-1.4-2.6 2.6-1.4-1.4-1.4 1.4z"/></symbol>
+    <symbol id="i-contact" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5Z"/></symbol>
+    <symbol id="i-gemini" viewBox="0 0 24 24"><path d="M12 2c.7 5.2 4.8 9.3 10 10-5.2.7-9.3 4.8-10 10-.7-5.2-4.8-9.3-10-10 5.2-.7 9.3-4.8 10-10Z"/></symbol>
+  </svg>
+
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div class="brand-area">
+        <button class="icon-button" id="menuButton" aria-label="Main menu" data-tooltip="Main menu"><svg><use href="#i-menu"/></svg></button>
+        <button class="gmail-brand" id="brandButton" aria-label="Gmail home">
+          <svg class="gmail-mark" viewBox="0 0 40 30" aria-hidden="true"><path fill="#4285f4" d="M3 6v20h7V12l10 8 10-8v14h7V6l-5-3-12 9L8 3z"/><path fill="#34a853" d="M3 6v20h7V12L3 6z"/><path fill="#fbbc04" d="m8 3 12 9 4-3L12 0z"/><path fill="#ea4335" d="M37 6v20h-7V12L20 20v-8l12-9z"/></svg>
+          <span>Gmail</span>
+        </button>
+      </div>
+
+      <form class="search-box" id="searchForm" role="search">
+        <button type="submit" class="icon-button" aria-label="Search"><svg><use href="#i-search"/></svg></button>
+        <input id="searchInput" autocomplete="off" placeholder="Search mail" aria-label="Search mail">
+        <button type="button" class="icon-button" id="searchOptionsButton" aria-label="Show search options" data-tooltip="Show search options"><svg><use href="#i-tune"/></svg></button>
+        <div class="advanced-search" id="advancedSearch">
+          <label>From<input id="searchFrom" placeholder="Sender name or email"></label>
+          <label>Subject<input id="searchSubject" placeholder="Words in the subject"></label>
+          <label class="search-check"><input type="checkbox" id="searchStarred"> Is starred</label>
+          <div><button type="button" class="text-button" id="clearAdvanced">Clear</button><button type="button" class="primary-button" id="applyAdvanced">Search</button></div>
+        </div>
+      </form>
+
+      <nav class="top-actions" aria-label="Google controls">
+        <button class="icon-button desktop-only" id="helpButton" aria-label="Support" data-tooltip="Support"><svg><use href="#i-help"/></svg></button>
+        <button class="icon-button" id="settingsButton" aria-label="Settings" data-tooltip="Settings"><svg><use href="#i-settings"/></svg></button>
+        <button class="gemini-button" id="geminiButton" aria-label="Ask Gemini"><svg><use href="#i-gemini"/></svg><span>Ask Gemini</span></button>
+        <button class="icon-button desktop-only" id="appsButton" aria-label="Google apps" data-tooltip="Google apps"><svg><use href="#i-apps"/></svg></button>
+        <button class="avatar" id="profileButton" aria-label="Demo Account">FA</button>
+      </nav>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <button class="compose-button" id="composeButton"><svg><use href="#i-plus"/></svg><span>Compose</span></button>
+      <nav id="folderNav" class="folder-nav" aria-label="Mail folders"></nav>
+      <div class="labels-heading"><span>Labels</span><button class="icon-button small" id="newLabelButton" aria-label="Create new label"><svg><use href="#i-plus"/></svg></button></div>
+      <nav id="labelNav" class="folder-nav labels-nav"></nav>
+      <div class="storage">
+        <div><span>0.82 GB of 15 GB</span><span>5%</span></div>
+        <div class="storage-bar"><i></i></div>
+      </div>
+    </aside>
+
+    <main class="mail-surface" id="mailSurface">
+      <section id="listView" class="list-view">
+        <div class="mail-toolbar" id="mailToolbar">
+          <div class="toolbar-left">
+            <label class="select-control" data-tooltip="Select"><input type="checkbox" id="selectAll"><span></span></label>
+            <button class="icon-button small" id="selectMenuButton" aria-label="Select options"><svg><use href="#i-chevron"/></svg></button>
+            <span class="normal-tools">
+              <button class="icon-button" id="refreshButton" aria-label="Refresh" data-tooltip="Refresh"><svg><use href="#i-refresh"/></svg></button>
+              <button class="icon-button" id="moreButton" aria-label="More" data-tooltip="More"><svg><use href="#i-more"/></svg></button>
+            </span>
+            <span class="bulk-tools">
+              <button class="icon-button" data-action="archive" aria-label="Archive" data-tooltip="Archive"><svg><use href="#i-archive"/></svg></button>
+              <button class="icon-button" data-action="report" aria-label="Report spam" data-tooltip="Report spam"><svg><use href="#i-report"/></svg></button>
+              <button class="icon-button" data-action="delete" aria-label="Delete" data-tooltip="Delete"><svg><use href="#i-trash"/></svg></button>
+              <i class="toolbar-separator"></i>
+              <button class="icon-button" data-action="read" aria-label="Mark as read" data-tooltip="Mark as read"><svg><use href="#i-mail"/></svg></button>
+              <button class="icon-button" data-action="snooze" aria-label="Snooze" data-tooltip="Snooze"><svg><use href="#i-snooze"/></svg></button>
+            </span>
+          </div>
+          <div class="toolbar-right">
+            <button class="range-button" id="rangeButton">1–15 of 24</button>
+            <button class="icon-button small" id="prevPage" aria-label="Newer"><svg><use href="#i-arrow-left"/></svg></button>
+            <button class="icon-button small" id="nextPage" aria-label="Older"><svg><use href="#i-arrow-right"/></svg></button>
+          </div>
+        </div>
+        <div class="category-tabs" id="categoryTabs"></div>
+        <div class="message-list" id="messageList" role="main" aria-label="Conversations"></div>
+        <div class="empty-state" id="emptyState">
+          <svg><use href="#i-inbox"/></svg>
+          <h2>No mail here</h2>
+          <p>Messages in this folder will appear here.</p>
+        </div>
+        <footer class="mail-footer"><span>0.82 GB of 15 GB used</span><span>Terms · Privacy · Program Policies</span><span>Last account activity: 2 minutes ago</span></footer>
+      </section>
+
+      <article id="messageView" class="message-view" aria-live="polite">
+        <div class="message-toolbar">
+          <button class="icon-button" id="backButton" aria-label="Back to inbox"><svg><use href="#i-arrow-left"/></svg></button>
+          <button class="icon-button" data-message-action="archive" aria-label="Archive"><svg><use href="#i-archive"/></svg></button>
+          <button class="icon-button" data-message-action="report" aria-label="Report spam"><svg><use href="#i-report"/></svg></button>
+          <button class="icon-button" data-message-action="delete" aria-label="Delete"><svg><use href="#i-trash"/></svg></button>
+          <i class="toolbar-separator"></i>
+          <button class="icon-button" data-message-action="unread" aria-label="Mark unread"><svg><use href="#i-mail"/></svg></button>
+          <button class="icon-button" data-message-action="snooze" aria-label="Snooze"><svg><use href="#i-snooze"/></svg></button>
+          <span class="message-toolbar-spacer"></span>
+          <button class="icon-button" id="messagePrev" aria-label="Newer"><svg><use href="#i-arrow-left"/></svg></button>
+          <button class="icon-button" id="messageNext" aria-label="Older"><svg><use href="#i-arrow-right"/></svg></button>
+        </div>
+        <div id="messageContent"></div>
+      </article>
+    </main>
+
+    <aside class="workspace-rail" id="workspaceRail">
+      <button class="rail-button calendar-icon" data-panel="Calendar" aria-label="Calendar"><svg><use href="#i-calendar"/></svg></button>
+      <button class="rail-button keep-icon" data-panel="Keep" aria-label="Keep"><svg><use href="#i-keep"/></svg></button>
+      <button class="rail-button task-icon" data-panel="Tasks" aria-label="Tasks"><svg><use href="#i-task"/></svg></button>
+      <button class="rail-button contact-icon" data-panel="Contacts" aria-label="Contacts"><svg><use href="#i-contact"/></svg></button>
+      <i class="rail-separator"></i>
+      <button class="rail-button" data-panel="Add-ons" aria-label="Get Add-ons"><svg><use href="#i-plus"/></svg></button>
+    </aside>
+
+    <aside class="utility-panel" id="utilityPanel">
+      <header><h2 id="utilityTitle">Calendar</h2><button class="icon-button" id="closeUtility"><svg><use href="#i-close"/></svg></button></header>
+      <div id="utilityContent"></div>
+    </aside>
+
+    <aside class="settings-panel" id="settingsPanel">
+      <header><h2>Quick settings</h2><button class="icon-button" id="closeSettings"><svg><use href="#i-close"/></svg></button></header>
+      <button class="outline-button">See all settings</button>
+      <section><h3>Density</h3><label><input type="radio" name="density" value="default" checked> Default</label><label><input type="radio" name="density" value="comfortable"> Comfortable</label><label><input type="radio" name="density" value="compact"> Compact</label></section>
+      <section><h3>Theme</h3><div class="theme-options"><button data-theme="light" class="theme light active">Light</button><button data-theme="soft" class="theme soft">Soft</button><button data-theme="dark" class="theme dark">Dark</button></div></section>
+      <section><h3>Inbox type</h3><label><input type="radio" name="inboxType" checked> Default</label><label><input type="radio" name="inboxType"> Important first</label><label><input type="radio" name="inboxType"> Unread first</label></section>
+      <section><h3>Reading pane</h3><label><input type="checkbox" id="readingPaneToggle"> Enable reading pane</label></section>
+    </aside>
+
+    <aside class="gemini-panel" id="geminiPanel">
+      <header><div><svg><use href="#i-gemini"/></svg><h2>Gemini</h2></div><button class="icon-button" id="closeGemini"><svg><use href="#i-close"/></svg></button></header>
+      <div class="gemini-welcome"><svg><use href="#i-gemini"/></svg><h2>Hi, Fakhrul</h2><p>How can I help you with your inbox?</p></div>
+      <div class="suggestion-list"><button>Summarize unread emails</button><button>Find emails about upcoming meetings</button><button>Show recent order confirmations</button></div>
+      <form id="geminiForm"><input id="geminiInput" placeholder="Ask Gemini"><button class="icon-button"><svg><use href="#i-send"/></svg></button></form>
+    </aside>
+
+    <section class="compose-window" id="composeWindow" aria-label="New Message">
+      <header><span id="composeTitle">New Message</span><div><button class="icon-button tiny" id="minimizeCompose" aria-label="Minimize">—</button><button class="icon-button tiny" id="popoutCompose" aria-label="Full screen"><svg><use href="#i-popout"/></svg></button><button class="icon-button tiny" id="closeCompose" aria-label="Save and close"><svg><use href="#i-close"/></svg></button></div></header>
+      <div class="compose-fields">
+        <div class="recipient-row"><span>To</span><input id="composeTo" aria-label="Recipients"><button>Cc</button><button>Bcc</button></div>
+        <input id="composeSubject" placeholder="Subject" aria-label="Subject">
+      </div>
+      <div id="composeBody" class="compose-body" contenteditable="true" aria-label="Message body"></div>
+      <footer>
+        <button class="send-button" id="sendButton">Send <span>⌄</span></button>
+        <button class="icon-button" id="formatButton" aria-label="Formatting options"><b>A</b></button>
+        <button class="icon-button" id="attachButton" aria-label="Attach files"><svg><use href="#i-attach"/></svg></button>
+        <span></span>
+        <button class="icon-button" id="discardButton" aria-label="Discard draft"><svg><use href="#i-trash"/></svg></button>
+      </footer>
+    </section>
+
+    <div class="popover" id="selectPopover"><button data-select="all">All</button><button data-select="none">None</button><button data-select="read">Read</button><button data-select="unread">Unread</button><button data-select="starred">Starred</button></div>
+    <div class="popover" id="morePopover"><button data-more="read">Mark all as read</button><button data-more="starred">Show starred</button><button data-more="reset">Reset demo mailbox</button></div>
+    <div class="account-popover" id="accountPopover"><button class="avatar large">FA</button><strong>Fakhrul Alam</strong><span>fakhrul@example.com</span><button class="outline-button">Manage your Google Account</button><hr><button>＋ Add another account</button><button>⇥ Sign out</button><small>Demo account · No data is sent</small></div>
+    <div class="apps-popover" id="appsPopover"><button><span class="app-dot blue">D</span>Drive</button><button><span class="app-dot red">C</span>Calendar</button><button><span class="app-dot green">S</span>Sheets</button><button><span class="app-dot yellow">K</span>Keep</button></div>
+    <div class="toast" id="toast" role="status"><span id="toastText">Conversation archived</span><button id="undoButton">Undo</button><button class="icon-button tiny" id="closeToast"><svg><use href="#i-close"/></svg></button></div>
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <dialog id="labelDialog"><form method="dialog"><h2>New label</h2><label>Please enter a new label name:<input id="newLabelInput" autocomplete="off"></label><div><button value="cancel" class="text-button">Cancel</button><button value="default" class="primary-button" id="createLabelConfirm">Create</button></div></form></dialog>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

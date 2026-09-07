@@ -30,7 +30,10 @@ npm start
 - Quick settings for density and theme
 - Gemini demo panel and Calendar, Keep, Tasks, Contacts, and Add-ons panels
 - Profile, Google apps, tooltips, toast messages, and demo reset
+- Real compose-form delivery through a server-side Web3Forms integration
 
 All state is held in memory and resets when the page reloads. Use **More → Reset demo mailbox** to reset it without refreshing.
+
+Copy `.env.example` to `.env.local` and set `WEB3FORMS_ACCESS_KEY` to enable delivery locally. The value must also be configured in the Vercel project environment. Web3Forms sends compose submissions to the inbox registered to that access key; the address entered in the demo's **To** field is included as message metadata.
 
 The App Router entry points are in `app/`. The original verified interface markup and browser behavior remain in `index.html` and `app.js`, loaded by the Next.js page and client initializer respectively.

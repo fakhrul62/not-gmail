@@ -302,19 +302,42 @@ function closeCompose(save = true) {
   render();
 }
 
-function sendMessage() {
+async function sendMessage() {
   const to = $("#composeTo").value.trim();
   if (!to) { showToast("Add at least one recipient"); $("#composeTo").focus(); return; }
   const subject = $("#composeSubject").value.trim() || "(no subject)";
+  const body = $("#composeBody").innerText.trim();
+  const sendButton = $("#sendButton");
+  sendButton.disabled = true;
+  sendButton.innerHTML = "Sending…";
+
+  try {
+    const response = await fetch("/api/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to, subject, message: body })
+    });
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Message could not be sent");
+    }
+
   messages.unshift({
-    id: Date.now(), sender: `To: ${to}`, email: to, subject, snippet: $("#composeBody").innerText.trim(), date: "now", fullDate: "Just now",
-    category: "primary", unread: false, starred: false, body: $("#composeBody").innerText.trim() || "(empty message)", archived: false,
+      id: Date.now(), sender: `To: ${to}`, email: to, subject, snippet: body, date: "now", fullDate: "Just now",
+      category: "primary", unread: false, starred: false, body: body || "(empty message)", archived: false,
     deleted: false, spam: false, snoozed: false, sent: true, draft: false, labels: []
   });
   $("#composeWindow").classList.remove("open", "minimized", "maximized");
   $("#composeTo").value = ""; $("#composeSubject").value = ""; $("#composeBody").innerHTML = "";
   render();
-  showToast("Message sent");
+    showToast("Message delivered through Web3Forms");
+  } catch (error) {
+    showToast(error.message || "Message could not be sent");
+  } finally {
+    sendButton.disabled = false;
+    sendButton.innerHTML = "Send <span>⌄</span>";
+  }
 }
 
 function escapeHtml(value) {

@@ -217,6 +217,7 @@ svg { width: 24px; height: 24px; fill: currentColor; display: block; }
 .compose-window > footer { height: 60px; display: flex; align-items: center; gap: 3px; padding: 0 14px; }
 .compose-window footer > span { flex: 1; }
 .send-button { height: 36px; min-width: 96px; padding: 0 14px; background: var(--primary-dark); color: white; border-radius: 18px; font-weight: 500; }
+.send-button:disabled { opacity: .65; cursor: wait; }
 .send-button span { border-left: 1px solid rgba(255,255,255,.35); padding-left: 10px; margin-left: 10px; }
 
 .popover, .account-popover, .apps-popover { display: none; position: fixed; z-index: 80; background: var(--surface); border-radius: 6px; box-shadow: 0 4px 14px rgba(60,64,67,.3); padding: 6px 0; }

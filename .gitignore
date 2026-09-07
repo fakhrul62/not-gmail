@@ -4,3 +4,4 @@ out/
 .env*
 npm-debug.log*
 gmail-reference*.png
+.vercel

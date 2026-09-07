@@ -318,7 +318,7 @@ async function sendMessage() {
 
     const response = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
         access_key: accessKey,
         from_name: "Not Gmail",
@@ -345,7 +345,10 @@ async function sendMessage() {
   render();
     showToast("Message delivered through Web3Forms");
   } catch (error) {
-    showToast(error.message || "Message could not be sent");
+    const hostedDomainBlocked = location.hostname.endsWith(".vercel.app") && error.message === "Failed to fetch";
+    showToast(hostedDomainBlocked
+      ? "Web3Forms blocked this free Vercel domain. Connect a custom domain or use another mail provider."
+      : error.message || "Message could not be sent");
   } finally {
     sendButton.disabled = false;
     sendButton.innerHTML = "Send <span>⌄</span>";

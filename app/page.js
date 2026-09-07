@@ -16,18 +16,9 @@ function getDemoMarkup() {
 }
 
 export default function HomePage() {
-  const web3formsConfig = JSON.stringify({
-    accessKey: process.env.WEB3FORMS_ACCESS_KEY || ""
-  }).replace(/</g, "\\u003c");
-
   return (
     <>
       <div dangerouslySetInnerHTML={{ __html: getDemoMarkup() }} />
-      <script
-        id="web3forms-config"
-        type="application/json"
-        dangerouslySetInnerHTML={{ __html: web3formsConfig }}
-      />
       <DemoInitializer />
     </>
   );

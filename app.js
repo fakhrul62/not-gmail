@@ -312,27 +312,20 @@ async function sendMessage() {
   sendButton.innerHTML = "Sending…";
 
   try {
-    const configElement = $("#web3forms-config");
-    const accessKey = configElement ? JSON.parse(configElement.textContent).accessKey : "";
-    if (!accessKey) throw new Error("Email delivery is not configured");
-
-    const response = await fetch("https://api.web3forms.com/submit", {
+    const response = await fetch("/api/gmail/send", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        access_key: accessKey,
-        from_name: "Not Gmail",
-        email: to,
-        subject: `[Not Gmail] ${subject}`,
-        intended_recipient: to,
-        message: body || "(empty message)",
-        botcheck: ""
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to, subject, body })
     });
     const result = await response.json().catch(() => ({}));
 
+    if (result.authRequired) {
+      sessionStorage.setItem("not-gmail-draft", JSON.stringify({ to, subject, body }));
+      location.href = "/api/auth/google?returnTo=/";
+      return;
+    }
     if (!response.ok || !result.success) {
-      throw new Error(result.message || "Web3Forms could not deliver the message");
+      throw new Error(result.error || "Gmail could not send the message");
     }
 
   messages.unshift({
@@ -343,16 +336,64 @@ async function sendMessage() {
   $("#composeWindow").classList.remove("open", "minimized", "maximized");
   $("#composeTo").value = ""; $("#composeSubject").value = ""; $("#composeBody").innerHTML = "";
   render();
-    showToast("Message delivered through Web3Forms");
+    showToast("Message sent through Gmail");
   } catch (error) {
-    const hostedDomainBlocked = location.hostname.endsWith(".vercel.app") && error.message === "Failed to fetch";
-    showToast(hostedDomainBlocked
-      ? "Web3Forms blocked this free Vercel domain. Connect a custom domain or use another mail provider."
-      : error.message || "Message could not be sent");
+    showToast(error.message || "Message could not be sent");
   } finally {
     sendButton.disabled = false;
     sendButton.innerHTML = "Send <span>⌄</span>";
   }
+}
+
+function connectGoogle() {
+  if (composeHasContent()) {
+    sessionStorage.setItem("not-gmail-draft", JSON.stringify({
+      to: $("#composeTo").value.trim(),
+      subject: $("#composeSubject").value.trim(),
+      body: $("#composeBody").innerText.trim()
+    }));
+  }
+  location.href = "/api/auth/google?returnTo=/";
+}
+
+async function updateGoogleAccount() {
+  try {
+    const response = await fetch("/api/auth/status", { cache: "no-store" });
+    const status = await response.json();
+    $("#accountEmail").textContent = status.connected ? status.email : "Google account not connected";
+    $("#accountName").textContent = status.connected ? "Connected to Gmail" : "Not Gmail";
+    $("#accountStatus").textContent = status.connected
+      ? "Real messages send from this Google account"
+      : status.configured ? "Connect Google to send real email" : "Google OAuth setup is required";
+    $("#connectGoogleButton").textContent = status.connected ? "Manage connection" : "Connect Google Account";
+    $("#signOutButton").style.display = status.connected ? "block" : "none";
+  } catch {
+    $("#accountStatus").textContent = "Could not check Google connection";
+  }
+}
+
+function restoreComposeAfterGoogle() {
+  const params = new URLSearchParams(location.search);
+  const gmailStatus = params.get("gmail");
+  if (!gmailStatus) return;
+
+  const messagesByStatus = {
+    connected: "Google account connected. Click Send to deliver your message.",
+    denied: "Google authorization was cancelled",
+    "invalid-state": "Google sign-in expired. Please try again.",
+    "token-error": "Google could not complete authorization",
+    "not-configured": "Google OAuth credentials are not configured yet"
+  };
+  const savedDraft = sessionStorage.getItem("not-gmail-draft");
+  if (savedDraft) {
+    try {
+      const draft = JSON.parse(savedDraft);
+      openCompose(draft.to || "", draft.subject || "", draft.body || "");
+    } catch { /* Ignore an invalid local draft. */ }
+    sessionStorage.removeItem("not-gmail-draft");
+  }
+  showToast(messagesByStatus[gmailStatus] || "Google account status changed");
+  history.replaceState({}, "", location.pathname + location.hash);
 }
 
 function escapeHtml(value) {
@@ -457,11 +498,17 @@ $("#readingPaneToggle").addEventListener("change", event => showToast(event.targ
 $(".settings-panel > .outline-button").addEventListener("click", () => showToast("All settings are represented in Quick settings for this demo"));
 
 $("#profileButton").addEventListener("click", event => { event.stopPropagation(); $("#accountPopover").classList.toggle("open"); $("#appsPopover").classList.remove("open"); });
+$("#connectGoogleButton").addEventListener("click", connectGoogle);
+$("#switchGoogleButton").addEventListener("click", connectGoogle);
+$("#signOutButton").addEventListener("click", async () => {
+  await fetch("/api/auth/logout", { method: "POST" });
+  await updateGoogleAccount();
+  showToast("Signed out of Gmail");
+});
 $("#appsButton").addEventListener("click", event => { event.stopPropagation(); $("#appsPopover").classList.toggle("open"); $("#accountPopover").classList.remove("open"); });
 $("#helpButton").addEventListener("click", () => showToast("Help Center is disabled in this local demo"));
 $("#rangeButton").addEventListener("click", () => showToast(`${folderMessages().length} conversations in this view`));
 $$(".apps-popover button").forEach(button => button.addEventListener("click", () => { closeFloating(); showToast(`${button.textContent.trim()} opened in demo mode`); }));
-$$(".account-popover > button:not(.avatar)").forEach(button => button.addEventListener("click", () => showToast(`${button.textContent.trim()} is simulated in this demo`)));
 $("#newLabelButton").addEventListener("click", () => { $("#newLabelInput").value = ""; $("#labelDialog").showModal(); setTimeout(() => $("#newLabelInput").focus(), 0); });
 $("#createLabelConfirm").addEventListener("click", event => {
   const name = $("#newLabelInput").value.trim();
@@ -502,3 +549,5 @@ document.addEventListener("keydown", event => {
 });
 
 render();
+updateGoogleAccount();
+restoreComposeAfterGoogle();

@@ -111,8 +111,8 @@ test("mobile mailbox fits the viewport", async ({ page, context }) => {
   const surface = await page.locator("#mailSurface").boundingBox();
   expect(surface.x).toBeGreaterThanOrEqual(0); expect(surface.x + surface.width).toBeLessThanOrEqual(390);
   const avatar = await page.locator("#profileButton").boundingBox();
-  const notice = await page.locator(".connection-notice").boundingBox();
-  expect(avatar.y).toBeGreaterThanOrEqual(notice.y + notice.height);
+  await expect(page.locator(".connection-notice")).toHaveCount(0);
+  expect(avatar.y).toBeGreaterThanOrEqual(0);
   await expect(page.locator("#nextPage")).toBeVisible();
   await expect(page.locator("#selectAll")).toBeVisible();
   await expect(page.locator("#moreButton")).toBeVisible();

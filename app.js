@@ -45,7 +45,7 @@ function showToast(message) {
   toastTimer = setTimeout(() => $("#toast").classList.remove("open"), 6000);
 }
 function connectionNotice(message) {
-  $(".connection-notice").innerHTML = `${escapeHtml(message)} <a href="/connect">${state.account?.connected ? "Reconnect Gmail" : "Connect Gmail"}</a> · <a href="/privacy">Privacy</a>`;
+  $("#accountStatus").textContent = message;
 }
 function renderNav() {
   const labels = state.summary?.labels || [];

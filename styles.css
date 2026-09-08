@@ -29,11 +29,7 @@
 .public-card .public-connect { display: inline-block; padding: 12px 24px; border-radius: 24px; background: var(--primary); color: white; text-decoration: none; font-weight: 600; }
 .public-card footer { margin-top: 28px; }
 .public-note { color: var(--muted); font-size: 12px; }
-.connection-notice { padding: 8px 16px; background: var(--primary-soft); color: var(--text); line-height: 1.5; }
-.connection-notice a { color: var(--primary); font-weight: 600; }
-body:has(.connection-notice) { display: flex; flex-direction: column; }
-body:has(.connection-notice) > div:has(.app-shell) { flex: 1; min-height: 0; }
-body:has(.connection-notice) .app-shell { height: 100%; }
+.mailbox-root { height: 100%; }
 @media (max-width: 480px) { .public-card { padding: 24px; } }
 
 * { box-sizing: border-box; }
@@ -344,7 +340,6 @@ body.theme-dark .message-body .hero-card { background: linear-gradient(135deg,#2
 @media (max-width: 720px) {
   .real-message-row { grid-template-columns: 25px 25px minmax(65px, 85px) minmax(0, 1fr); }
   .real-message-body iframe { height: 60vh; }
-  .connection-notice { font-size: 12px; }
 }
 
 #selectionCount { margin-left: 8px; font-size: 12px; white-space: nowrap; }

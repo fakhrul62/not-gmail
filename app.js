@@ -145,8 +145,8 @@ async function openMessage(id) {
     $("#messageContent").innerHTML = `<div class="message-inner"><div class="message-subject"><h1>${escapeHtml(message.subject)}</h1></div>
       <div class="message-sender"><div class="sender-avatar">${escapeHtml((message.sender || "?").slice(0, 1).toUpperCase())}</div><div class="sender-meta"><strong>${escapeHtml(message.sender)}</strong> <span>&lt;${escapeHtml(message.email)}&gt;</span><br><span>To: ${escapeHtml(message.to)}</span>${message.cc ? `<br><span>Cc: ${escapeHtml(message.cc)}</span>` : ""}</div><div class="message-date">${escapeHtml(displayDate(message.timestamp, true))}</div></div>
       <div class="message-body real-message-body" id="realBody"></div>
-      <div class="real-attachments">${message.attachments.map(part => `<a href="/api/gmail/messages/${encodeURIComponent(id)}?part=${encodeURIComponent(part.partId)}" download>${escapeHtml(part.filename)} (${part.size.toLocaleString()} bytes)</a>`).join("")}</div>
-      <div class="reply-actions"><button id="replyButton">Reply</button><button id="forwardButton">Forward</button><a href="${escapeHtml(gmailUrl)}" target="_blank" rel="noopener noreferrer">Open in Gmail</a></div>
+      <div class="real-attachments">${message.attachments.map(part => `<a href="/api/gmail/messages/${encodeURIComponent(id)}?part=${encodeURIComponent(part.partId)}" download>${icon("attach")}<span>${escapeHtml(part.filename)} (${part.size.toLocaleString()} bytes)</span></a>`).join("")}</div>
+      <div class="reply-actions"><button id="replyButton">${icon("reply")}Reply</button><button id="forwardButton">${icon("forward")}Forward</button><a href="${escapeHtml(gmailUrl)}" target="_blank" rel="noopener noreferrer">${icon("external")}Open in Gmail</a></div>
       <p class="public-note">Reading here leaves your Gmail read/unread status unchanged. Use Gmail to organize messages.</p></div>`;
     if (message.html) {
       const frame = document.createElement("iframe"); frame.setAttribute("sandbox", ""); frame.setAttribute("referrerpolicy", "no-referrer"); frame.title = "Email content";
@@ -194,7 +194,7 @@ async function sendMessage() {
     await api("/api/gmail/send", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(content) });
     clearCompose(); showToast("Message sent through Gmail."); await loadMailbox();
   } catch (error) { showToast(error.message); if (error.authRequired) { saveLocalDraft(); connectionNotice("Reconnect Gmail to send your saved draft."); } }
-  finally { $("#sendButton").disabled = false; $("#sendButton").textContent = "Send"; }
+  finally { $("#sendButton").disabled = false; $("#sendButton").innerHTML = `${icon("send")}<span>Send</span>`; }
 }
 async function initialize() {
   connectionNotice("Checking your Gmail connection…"); state.loading = true; renderNav(); renderCategories(); renderMessages();
@@ -203,7 +203,7 @@ async function initialize() {
     $("#accountEmail").textContent = email || "No account connected"; $("#accountName").textContent = connected ? email : "Not Gmail";
     $$("#profileButton, #accountPopover .avatar").forEach(element => { element.textContent = email ? email.slice(0, 1).toUpperCase() : "?"; element.setAttribute("aria-label", email || "Connect Gmail"); });
     $("#accountStatus").textContent = canRead ? "Gmail reading and sending connected" : connected ? "Reconnect to allow mailbox reading" : "Connect to read and send email";
-    $("#connectGoogleButton").textContent = connected ? "Reconnect Gmail" : "Connect Gmail"; $("#signOutButton").style.display = connected ? "block" : "none";
+    $("#connectGoogleButton").textContent = connected ? "Reconnect Gmail" : "Connect Gmail"; $("#signOutButton").style.display = connected ? "flex" : "none";
     connectionNotice(canRead ? `Connected to ${email}. Your messages and counts come from Gmail.` : connected ? "Allow Gmail reading access to load your real mailbox." : "Connect Gmail to read and send your email.");
     if (canRead) await loadMailbox(); else { state.loading = false; renderMessages(); }
   } catch (error) { state.loading = false; state.error = error.message; renderMessages(); }

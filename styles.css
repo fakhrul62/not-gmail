@@ -39,7 +39,8 @@ html, body { height: 100%; margin: 0; overflow: hidden; }
 body { font-family: Roboto, Arial, sans-serif; color: var(--text); background: var(--bg); font-size: 14px; }
 button, input { font: inherit; color: inherit; }
 button { border: 0; background: none; cursor: pointer; }
-svg { width: 24px; height: 24px; fill: currentColor; display: block; }
+svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; display: block; flex-shrink: 0; }
+.gmail-mark { stroke: none; }
 .svg-defs { width: 0; height: 0; position: absolute; }
 .app-shell { height: 100%; display: grid; grid-template: 64px minmax(0, 1fr) / var(--sidebar-width) minmax(500px, 1fr) var(--rail-width); background: var(--bg); transition: background .2s; }
 
@@ -129,6 +130,7 @@ svg { width: 24px; height: 24px; fill: currentColor; display: block; }
 .star-button { color: #747775; padding: 3px; }
 .star-button svg { width: 20px; height: 20px; }
 .star-button.starred { color: #f4b400; }
+.star-button.starred svg { fill: #fbbc04; stroke: #d99a00; stroke-width: 1.6; }
 .sender, .message-summary, .subject-line { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .message-summary { display: flex; min-width: 0; font-weight: 400; }
 .subject-line { flex: 0 1 auto; color: var(--text); }
@@ -349,3 +351,10 @@ body.theme-dark .message-body .hero-card { background: linear-gradient(135deg,#2
 .popover button:disabled { opacity: .5; cursor: default; }
 #morePopover { width: min(250px, calc(100vw - 16px)); }
 @media (max-width: 720px) { .mail-toolbar { flex-wrap: wrap; height: auto; min-height: 48px; } #selectionCount { order: 3; width: 100%; } #selectionCount:empty { display: none; } .toolbar-left .icon-button { width: 32px; } }
+
+/* Shared Lucide sizing and alignment across static and rendered controls. */
+.popover button, #switchGoogleButton, #signOutButton, .reply-actions button, .reply-actions a, .real-attachments a, .send-button { display: inline-flex; align-items: center; gap: 10px; }
+.popover button svg, #switchGoogleButton svg, #signOutButton svg, .reply-actions svg, .real-attachments svg, .send-button svg { width: 18px; height: 18px; }
+.popover button svg { color: var(--muted); }
+.send-button > span { border: 0; padding: 0; margin: 0; }
+.icon-button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }

@@ -8,7 +8,8 @@
     "start": "next start",
     "check": "node --check app.js",
     "test": "node --test tests/mailbox.test.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "engines": {
     "node": ">=20.9.0"
@@ -19,7 +20,8 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0"
+    "@playwright/test": "^1.63.0",
+    "lucide-static": "^1.42.0"
   },
   "type": "module"
 }

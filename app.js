@@ -170,6 +170,16 @@ function closeFloating() {
   $$("#moreButton, #selectMenuButton").forEach(button => button.setAttribute("aria-expanded", "false"));
 }
 function openCompose(to = "", subject = "", body = "") {
+  if (arguments.length === 0 && !Object.values(draft()).some(Boolean)) {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem("not-gmail-draft") || "null");
+      if (saved) {
+        to = typeof saved.to === "string" ? saved.to : "";
+        subject = typeof saved.subject === "string" ? saved.subject : "";
+        body = typeof saved.body === "string" ? saved.body : "";
+      }
+    } catch { sessionStorage.removeItem("not-gmail-draft"); }
+  }
   $("#composeWindow").classList.add("open"); $("#composeWindow").classList.remove("minimized");
   if (to || subject || body) { $("#composeTo").value = to; $("#composeSubject").value = subject; $("#composeBody").innerText = body; }
   $("#composeTo").focus();
@@ -202,7 +212,6 @@ async function initialize() {
     const statuses = { connected: "Gmail connected.", denied: "Google authorization was cancelled.", "missing-permission": "Reconnect and allow both reading and sending email.", "invalid-state": "Sign-in expired. Please try again.", "token-error": "Google sign-in failed. Please try again.", "not-configured": "The site owner needs to configure Gmail." };
     showToast(statuses[result] || "Google connection updated."); history.replaceState({}, "", location.pathname);
   }
-  try { const saved = JSON.parse(sessionStorage.getItem("not-gmail-draft") || "null"); if (saved) openCompose(saved.to, saved.subject, saved.body); } catch { sessionStorage.removeItem("not-gmail-draft"); }
 }
 
 // Reading permission cannot change Gmail. Expose only implemented controls.

@@ -96,7 +96,13 @@ test("sending uses Gmail response, local drafts do not inflate Gmail counts, sig
   await page.locator("#closeCompose").click();
   await expect(page.locator("#toastText")).toContainText("on this device");
   await expect(page.locator('[data-folder="Drafts"] .count')).toHaveText("2");
+  await page.reload();
+  await expect(page.locator(".message-row")).toHaveCount(25);
+  await expect(page.locator("#composeWindow")).not.toBeVisible();
   await page.locator("#composeButton").click();
+  await expect(page.locator("#composeTo")).toHaveValue("recipient@example.com");
+  await expect(page.locator("#composeSubject")).toHaveValue("Test compose");
+  await expect(page.locator("#composeBody")).toHaveText("Test body");
   await page.locator("#sendButton").click();
   await expect(page.locator("#toastText")).toContainText("Message sent through Gmail");
   await page.locator("#profileButton").click(); await page.locator("#signOutButton").click();

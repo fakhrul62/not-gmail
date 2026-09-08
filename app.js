@@ -7,6 +7,32 @@ const folders = [["Inbox", "INBOX", "inbox"], ["Starred", "STARRED", "star"], ["
 const categories = [["all", "All inbox"], ["primary", "Primary"], ["promotions", "Promotions"], ["social", "Social"], ["updates", "Updates"], ["forums", "Forums"]];
 const state = { account: null, summary: null, messages: [], folder: "Inbox", category: "all", query: "", tokens: [null], page: 0, next: null, loading: false, error: "", currentId: null, request: 0, detailRequest: 0, controller: null };
 let toastTimer;
+const selected = new Set();
+
+function renderSelection() {
+  const count = selected.size;
+  $("#selectAll").checked = state.messages.length > 0 && count === state.messages.length;
+  $("#selectAll").indeterminate = count > 0 && count < state.messages.length;
+  $("#selectAll").disabled = state.loading || !state.messages.length;
+  $("#selectionCount").textContent = count ? `${count} selected` : "";
+  $$(".message-row").forEach(row => {
+    const checked = selected.has(row.dataset.id);
+    row.classList.toggle("selected", checked);
+    row.querySelector("input").checked = checked;
+  });
+  $$("[data-more='copy'], [data-more='clear']").forEach(button => { button.disabled = !count; });
+}
+
+function toggleMailboxMenu(buttonId, menuId) {
+  const button = $(buttonId), menu = $(menuId), wasOpen = menu.classList.contains("open");
+  closeFloating();
+  if (wasOpen) return;
+  const rect = button.getBoundingClientRect();
+  menu.style.top = `${rect.bottom + 4}px`;
+  menu.style.left = `${Math.max(8, Math.min(rect.left, innerWidth - 250))}px`;
+  menu.classList.add("open"); button.setAttribute("aria-expanded", "true");
+  menu.querySelector("button:not(:disabled)")?.focus();
+}
 
 async function api(path, options = {}) {
   const response = await fetch(path, { cache: "no-store", ...options });
@@ -50,11 +76,18 @@ function displayDate(timestamp, full = false) {
 function decodeSnippet(snippet) { const element = document.createElement("textarea"); element.innerHTML = snippet; return element.value; }
 function renderMessages() {
   $("#messageList").innerHTML = state.messages.map(message => `<div class="message-row real-message-row ${message.unread ? "unread" : ""}" data-id="${escapeHtml(message.id)}" role="button" tabindex="0">
+    <label class="row-check"><input type="checkbox" aria-label="Select ${escapeHtml(message.subject)}"></label>
     <span class="star-button ${message.starred ? "starred" : ""}" aria-label="${message.starred ? "Starred" : "Not starred"}">${icon("star")}</span>
     <span class="sender">${escapeHtml(state.folder === "Sent" || state.folder === "Drafts" ? message.to : message.sender)}</span>
     <span class="message-summary"><span class="subject-line">${escapeHtml(message.subject)}</span><span class="snippet">${escapeHtml(decodeSnippet(message.snippet))}</span></span>
     <span class="date">${escapeHtml(displayDate(message.timestamp))}</span></div>`).join("");
-  $$(".message-row").forEach(row => { row.addEventListener("click", () => openMessage(row.dataset.id)); row.addEventListener("keydown", event => { if (event.key === "Enter") openMessage(row.dataset.id); }); });
+  $$(".message-row").forEach(row => {
+    row.addEventListener("click", event => { if (!event.target.closest("label,input")) openMessage(row.dataset.id); });
+    row.addEventListener("keydown", event => { if (event.key === "Enter" && event.target === row) openMessage(row.dataset.id); });
+    row.querySelector("input").addEventListener("change", event => {
+      event.target.checked ? selected.add(row.dataset.id) : selected.delete(row.dataset.id); renderSelection();
+    });
+  });
   $("#messageList").style.display = state.messages.length ? "block" : "none";
   const empty = $("#emptyState"); empty.style.display = state.messages.length ? "none" : "flex"; empty.setAttribute("role", "status");
   const headline = state.loading ? "Loading your Gmail…" : state.error || (!state.account?.connected ? "Connect Gmail to see your messages" : !state.account.canRead ? "Reconnect Gmail to allow reading your mailbox" : "No messages in this view");
@@ -64,8 +97,12 @@ function renderMessages() {
   const start = state.page * 25 + 1, end = state.page * 25 + state.messages.length;
   $("#rangeButton").textContent = state.loading ? "Loading…" : state.messages.length ? `${start}–${end}${total != null ? ` of ${total.toLocaleString()}` : state.next ? " · more available" : ""}` : "";
   $("#prevPage").disabled = state.loading || state.page === 0; $("#nextPage").disabled = state.loading || !state.next; $("#refreshButton").disabled = state.loading;
+  renderSelection();
 }
 async function loadMessages(reset = false) {
+  selected.clear();
+  $$("#selectPopover, #morePopover").forEach(menu => menu.classList.remove("open"));
+  $$("#selectMenuButton, #moreButton").forEach(button => button.setAttribute("aria-expanded", "false"));
   if (reset) { state.page = 0; state.tokens = [null]; }
   state.controller?.abort(); const controller = new AbortController(); state.controller = controller;
   const request = ++state.request;
@@ -88,6 +125,7 @@ async function loadMessages(reset = false) {
   } finally { if (request === state.request) { state.loading = false; renderMessages(); } }
 }
 async function loadMailbox() {
+  selected.clear();
   state.controller?.abort(); state.request++;
   state.summary = null; state.error = ""; state.messages = []; state.loading = true; renderNav(); renderMessages();
   try { state.summary = await api("/api/gmail/mailbox"); await loadMessages(true); }
@@ -127,7 +165,10 @@ async function openMessage(id) {
 }
 function closeMessage() { state.currentId = null; state.detailRequest++; $("#messageView").classList.remove("open"); $("#listView").style.display = "flex"; }
 function closeMobileMenu() { app.classList.remove("mobile-menu-open"); $("#modalBackdrop").classList.remove("open"); }
-function closeFloating() { $$(".popover.open,.account-popover.open,.apps-popover.open,.advanced-search.open").forEach(element => element.classList.remove("open")); }
+function closeFloating() {
+  $$(".popover.open,.account-popover.open,.apps-popover.open,.advanced-search.open").forEach(element => element.classList.remove("open"));
+  $$("#moreButton, #selectMenuButton").forEach(button => button.setAttribute("aria-expanded", "false"));
+}
 function openCompose(to = "", subject = "", body = "") {
   $("#composeWindow").classList.add("open"); $("#composeWindow").classList.remove("minimized");
   if (to || subject || body) { $("#composeTo").value = to; $("#composeSubject").value = subject; $("#composeBody").innerText = body; }
@@ -165,8 +206,31 @@ async function initialize() {
 }
 
 // Reading permission cannot change Gmail. Expose only implemented controls.
-$("#selectAll").closest("label").hidden = true;
-$$("#selectMenuButton, #moreButton, .bulk-tools, [data-message-action], #newLabelButton, .storage, #geminiButton, #appsButton, #workspaceRail, #attachButton, #formatButton, .recipient-row button, #undoButton").forEach(element => { element.hidden = true; });
+$$(".bulk-tools, [data-message-action], #newLabelButton, .storage, #geminiButton, #appsButton, #workspaceRail, #attachButton, #formatButton, .recipient-row button, #undoButton").forEach(element => { element.hidden = true; });
+$("#selectAll").addEventListener("change", event => {
+  selected.clear(); if (event.target.checked) state.messages.forEach(message => selected.add(message.id)); renderSelection();
+});
+$("#selectMenuButton").addEventListener("click", () => toggleMailboxMenu("#selectMenuButton", "#selectPopover"));
+$("#moreButton").addEventListener("click", () => toggleMailboxMenu("#moreButton", "#morePopover"));
+$$("[data-select]").forEach(button => button.addEventListener("click", () => {
+  const type = button.dataset.select; selected.clear();
+  state.messages.filter(message => type === "all" || type === "read" && !message.unread || type === "unread" && message.unread || type === "starred" && message.starred).forEach(message => selected.add(message.id));
+  renderSelection(); closeFloating(); $("#selectMenuButton").focus();
+}));
+$$("[data-more]").forEach(button => button.addEventListener("click", async () => {
+  const action = button.dataset.more;
+  closeFloating(); $("#moreButton").focus();
+  if (action === "clear") { selected.clear(); renderSelection(); }
+  if (action === "copy") {
+    const addresses = [...new Set(state.messages.filter(message => selected.has(message.id)).map(message => message.email))];
+    try { await navigator.clipboard.writeText(addresses.join(", ")); showToast("Selected sender addresses copied."); }
+    catch { showToast("Clipboard access was blocked by your browser."); }
+  }
+  if (action === "reset") state.account?.canRead ? loadMailbox() : initialize();
+  if (action === "starred" || action === "unread") {
+    state.query = `is:${action}`; $("#searchInput").value = state.query; loadMessages(true);
+  }
+}));
 $("#readingPaneToggle").closest("section").hidden = true; $(".settings-panel > .outline-button").hidden = true;
 $("#closeCompose").setAttribute("aria-label", "Save draft on this device and close");
 $("#menuButton").addEventListener("click", () => { if (innerWidth <= 720) { app.classList.toggle("mobile-menu-open"); $("#modalBackdrop").classList.toggle("open"); } else app.classList.toggle("sidebar-collapsed"); });
@@ -203,7 +267,7 @@ $("#signOutButton").addEventListener("click", async () => { try { await api("/ap
 $("#helpButton").addEventListener("click", () => { location.href = "/connect"; });
 $("#closeToast").addEventListener("click", () => $("#toast").classList.remove("open"));
 $("#modalBackdrop").addEventListener("click", closeMobileMenu);
-document.addEventListener("click", event => { if (!event.target.closest(".account-popover,.advanced-search,#profileButton,#searchOptionsButton")) closeFloating(); });
+document.addEventListener("click", event => { if (!event.target.closest(".popover,.account-popover,.advanced-search,#profileButton,#searchOptionsButton,#moreButton,#selectMenuButton")) closeFloating(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape") { closeFloating(); closeMobileMenu(); $("#settingsPanel").classList.remove("open"); } });
 window.addEventListener("pagehide", () => { $("#messageContent").replaceChildren(); state.messages = []; state.summary = null; });
 window.addEventListener("pageshow", event => { if (event.persisted) location.reload(); });

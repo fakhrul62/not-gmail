@@ -92,11 +92,11 @@
       <section id="listView" class="list-view">
         <div class="mail-toolbar" id="mailToolbar">
           <div class="toolbar-left">
-            <label class="select-control" data-tooltip="Select"><input type="checkbox" id="selectAll"><span></span></label>
-            <button class="icon-button small" id="selectMenuButton" aria-label="Select options"><svg><use href="#i-chevron"/></svg></button>
+            <label class="select-control" data-tooltip="Select this page"><input type="checkbox" id="selectAll" aria-label="Select all messages on this page"><span></span></label>
+            <button class="icon-button small" id="selectMenuButton" aria-label="Select options" aria-controls="selectPopover" aria-expanded="false"><svg><use href="#i-chevron"/></svg></button>
             <span class="normal-tools">
               <button class="icon-button" id="refreshButton" aria-label="Refresh" data-tooltip="Refresh"><svg><use href="#i-refresh"/></svg></button>
-              <button class="icon-button" id="moreButton" aria-label="More" data-tooltip="More"><svg><use href="#i-more"/></svg></button>
+              <button class="icon-button" id="moreButton" aria-label="More" data-tooltip="More" aria-controls="morePopover" aria-expanded="false"><svg><use href="#i-more"/></svg></button>
             </span>
             <span class="bulk-tools">
               <button class="icon-button" data-action="archive" aria-label="Archive" data-tooltip="Archive"><svg><use href="#i-archive"/></svg></button>
@@ -107,6 +107,7 @@
               <button class="icon-button" data-action="snooze" aria-label="Snooze" data-tooltip="Snooze"><svg><use href="#i-snooze"/></svg></button>
             </span>
           </div>
+          <span id="selectionCount" role="status"></span>
           <div class="toolbar-right">
             <button class="range-button" id="rangeButton" aria-live="polite"></button>
             <button class="icon-button small" id="prevPage" aria-label="Newer"><svg><use href="#i-arrow-left"/></svg></button>
@@ -171,7 +172,7 @@
     </section>
 
     <div class="popover" id="selectPopover"><button data-select="all">All</button><button data-select="none">None</button><button data-select="read">Read</button><button data-select="unread">Unread</button><button data-select="starred">Starred</button></div>
-    <div class="popover" id="morePopover"><button data-more="read">Mark all as read</button><button data-more="starred">Show starred</button><button data-more="reset">Refresh mailbox</button></div>
+    <div class="popover" id="morePopover"><button data-more="unread">Show unread</button><button data-more="starred">Show starred</button><button data-more="copy" disabled>Copy selected sender addresses</button><button data-more="clear" disabled>Clear selection</button><button data-more="reset">Refresh mailbox</button></div>
     <div class="account-popover" id="accountPopover"><button class="avatar large">?</button><strong id="accountName">Not Gmail</strong><span id="accountEmail">Google account not connected</span><button class="outline-button" id="connectGoogleButton">Connect Google Account</button><hr><button id="switchGoogleButton">＋ Connect another account</button><button id="signOutButton">⇥ Sign out</button><small id="accountStatus">Connect Google to send real email</small></div>
     <div class="apps-popover" id="appsPopover"><button><span class="app-dot blue">D</span>Drive</button><button><span class="app-dot red">C</span>Calendar</button><button><span class="app-dot green">S</span>Sheets</button><button><span class="app-dot yellow">K</span>Keep</button></div>
     <div class="toast" id="toast" role="status"><span id="toastText">Conversation archived</span><button id="undoButton">Undo</button><button class="icon-button tiny" id="closeToast"><svg><use href="#i-close"/></svg></button></div>

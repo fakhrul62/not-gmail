@@ -114,5 +114,37 @@ test("mobile mailbox fits the viewport", async ({ page, context }) => {
   const notice = await page.locator(".connection-notice").boundingBox();
   expect(avatar.y).toBeGreaterThanOrEqual(notice.y + notice.height);
   await expect(page.locator("#nextPage")).toBeVisible();
+  await expect(page.locator("#selectAll")).toBeVisible();
+  await expect(page.locator("#moreButton")).toBeVisible();
+  await page.locator("#moreButton").click();
+  await expect(page.locator("#morePopover")).toBeVisible();
+  const menu = await page.locator("#morePopover").boundingBox();
+  expect(menu.x + menu.width).toBeLessThanOrEqual(390);
+  await page.keyboard.press("Escape");
   await page.screenshot({ path: "test-results/mailbox-mobile.png" });
+});
+
+test("checkbox selection and More work without opening messages or leaking across pages", async ({ page, context }) => {
+  await connect(context); await page.goto("/");
+  await expect(page.locator(".message-row")).toHaveCount(25);
+  await page.locator(".message-row input").first().check();
+  await expect(page.locator("#selectionCount")).toHaveText("1 selected");
+  await expect(page.locator("#messageView")).not.toHaveClass(/open/);
+  expect(await page.locator("#selectAll").evaluate(input => input.indeterminate)).toBe(true);
+  await page.locator("#selectAll").check();
+  await expect(page.locator(".message-row.selected")).toHaveCount(25);
+  await page.locator("#moreButton").click();
+  await expect(page.locator("#morePopover")).toBeVisible();
+  await page.locator('[data-more="clear"]').click();
+  await expect(page.locator(".message-row.selected")).toHaveCount(0);
+  await page.locator("#selectMenuButton").click();
+  await page.locator('[data-select="unread"]').click();
+  await expect(page.locator(".message-row.selected")).toHaveCount(25);
+  await page.locator("#nextPage").click();
+  await expect(page.locator(".message-row")).toHaveCount(1);
+  await expect(page.locator(".message-row.selected")).toHaveCount(0);
+  await page.locator("#moreButton").click();
+  await page.locator('[data-more="unread"]').click();
+  await expect(page.locator("#searchInput")).toHaveValue("is:unread");
+  await expect(page.locator("#morePopover")).not.toBeVisible();
 });

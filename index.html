@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8fafd">
-  <title>Inbox (12) - Demo Mail</title>
+  <title>Not Gmail</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -76,7 +76,7 @@
         <button class="icon-button" id="settingsButton" aria-label="Settings" data-tooltip="Settings"><svg><use href="#i-settings"/></svg></button>
         <button class="gemini-button" id="geminiButton" aria-label="Ask Gemini"><svg><use href="#i-gemini"/></svg><span>Ask Gemini</span></button>
         <button class="icon-button desktop-only" id="appsButton" aria-label="Google apps" data-tooltip="Google apps"><svg><use href="#i-apps"/></svg></button>
-        <button class="avatar" id="profileButton" aria-label="Demo Account">FA</button>
+        <button class="avatar" id="profileButton" aria-label="Google account">?</button>
       </nav>
     </header>
 
@@ -85,10 +85,7 @@
       <nav id="folderNav" class="folder-nav" aria-label="Mail folders"></nav>
       <div class="labels-heading"><span>Labels</span><button class="icon-button small" id="newLabelButton" aria-label="Create new label"><svg><use href="#i-plus"/></svg></button></div>
       <nav id="labelNav" class="folder-nav labels-nav"></nav>
-      <div class="storage">
-        <div><span>0.82 GB of 15 GB</span><span>5%</span></div>
-        <div class="storage-bar"><i></i></div>
-      </div>
+
     </aside>
 
     <main class="mail-surface" id="mailSurface">
@@ -111,19 +108,19 @@
             </span>
           </div>
           <div class="toolbar-right">
-            <button class="range-button" id="rangeButton">1–15 of 24</button>
+            <button class="range-button" id="rangeButton" aria-live="polite"></button>
             <button class="icon-button small" id="prevPage" aria-label="Newer"><svg><use href="#i-arrow-left"/></svg></button>
             <button class="icon-button small" id="nextPage" aria-label="Older"><svg><use href="#i-arrow-right"/></svg></button>
           </div>
         </div>
         <div class="category-tabs" id="categoryTabs"></div>
-        <div class="message-list" id="messageList" role="main" aria-label="Conversations"></div>
+        <div class="message-list" id="messageList" role="main" aria-label="Messages"></div>
         <div class="empty-state" id="emptyState">
           <svg><use href="#i-inbox"/></svg>
-          <h2>No mail here</h2>
+          <h2>Connect Gmail to see your messages</h2>
           <p>Messages in this folder will appear here.</p>
         </div>
-        <footer class="mail-footer"><span>0.82 GB of 15 GB used</span><span>Terms · Privacy · Program Policies</span><span>Last account activity: 2 minutes ago</span></footer>
+        <footer class="mail-footer"><a href="/privacy">Privacy</a></footer>
       </section>
 
       <article id="messageView" class="message-view" aria-live="polite">
@@ -143,16 +140,7 @@
       </article>
     </main>
 
-    <aside class="workspace-rail" id="workspaceRail">
-      <button class="rail-button calendar-icon" data-panel="Calendar" aria-label="Calendar"><svg><use href="#i-calendar"/></svg></button>
-      <button class="rail-button keep-icon" data-panel="Keep" aria-label="Keep"><svg><use href="#i-keep"/></svg></button>
-      <button class="rail-button task-icon" data-panel="Tasks" aria-label="Tasks"><svg><use href="#i-task"/></svg></button>
-      <button class="rail-button contact-icon" data-panel="Contacts" aria-label="Contacts"><svg><use href="#i-contact"/></svg></button>
-      <i class="rail-separator"></i>
-      <button class="rail-button" data-panel="Add-ons" aria-label="Get Add-ons"><svg><use href="#i-plus"/></svg></button>
-    </aside>
-
-    <aside class="utility-panel" id="utilityPanel">
+<aside class="utility-panel" id="utilityPanel">
       <header><h2 id="utilityTitle">Calendar</h2><button class="icon-button" id="closeUtility"><svg><use href="#i-close"/></svg></button></header>
       <div id="utilityContent"></div>
     </aside>
@@ -166,14 +154,7 @@
       <section><h3>Reading pane</h3><label><input type="checkbox" id="readingPaneToggle"> Enable reading pane</label></section>
     </aside>
 
-    <aside class="gemini-panel" id="geminiPanel">
-      <header><div><svg><use href="#i-gemini"/></svg><h2>Gemini</h2></div><button class="icon-button" id="closeGemini"><svg><use href="#i-close"/></svg></button></header>
-      <div class="gemini-welcome"><svg><use href="#i-gemini"/></svg><h2>Hi, Fakhrul</h2><p>How can I help you with your inbox?</p></div>
-      <div class="suggestion-list"><button>Summarize unread emails</button><button>Find emails about upcoming meetings</button><button>Show recent order confirmations</button></div>
-      <form id="geminiForm"><input id="geminiInput" placeholder="Ask Gemini"><button class="icon-button"><svg><use href="#i-send"/></svg></button></form>
-    </aside>
-
-    <section class="compose-window" id="composeWindow" aria-label="New Message">
+<section class="compose-window" id="composeWindow" aria-label="New Message">
       <header><span id="composeTitle">New Message</span><div><button class="icon-button tiny" id="minimizeCompose" aria-label="Minimize">—</button><button class="icon-button tiny" id="popoutCompose" aria-label="Full screen"><svg><use href="#i-popout"/></svg></button><button class="icon-button tiny" id="closeCompose" aria-label="Save and close"><svg><use href="#i-close"/></svg></button></div></header>
       <div class="compose-fields">
         <div class="recipient-row"><span>To</span><input id="composeTo" aria-label="Recipients"><button>Cc</button><button>Bcc</button></div>
@@ -190,8 +171,8 @@
     </section>
 
     <div class="popover" id="selectPopover"><button data-select="all">All</button><button data-select="none">None</button><button data-select="read">Read</button><button data-select="unread">Unread</button><button data-select="starred">Starred</button></div>
-    <div class="popover" id="morePopover"><button data-more="read">Mark all as read</button><button data-more="starred">Show starred</button><button data-more="reset">Reset demo mailbox</button></div>
-    <div class="account-popover" id="accountPopover"><button class="avatar large">FA</button><strong id="accountName">Not Gmail</strong><span id="accountEmail">Google account not connected</span><button class="outline-button" id="connectGoogleButton">Connect Google Account</button><hr><button id="switchGoogleButton">＋ Connect another account</button><button id="signOutButton">⇥ Sign out</button><small id="accountStatus">Connect Google to send real email</small></div>
+    <div class="popover" id="morePopover"><button data-more="read">Mark all as read</button><button data-more="starred">Show starred</button><button data-more="reset">Refresh mailbox</button></div>
+    <div class="account-popover" id="accountPopover"><button class="avatar large">?</button><strong id="accountName">Not Gmail</strong><span id="accountEmail">Google account not connected</span><button class="outline-button" id="connectGoogleButton">Connect Google Account</button><hr><button id="switchGoogleButton">＋ Connect another account</button><button id="signOutButton">⇥ Sign out</button><small id="accountStatus">Connect Google to send real email</small></div>
     <div class="apps-popover" id="appsPopover"><button><span class="app-dot blue">D</span>Drive</button><button><span class="app-dot red">C</span>Calendar</button><button><span class="app-dot green">S</span>Sheets</button><button><span class="app-dot yellow">K</span>Keep</button></div>
     <div class="toast" id="toast" role="status"><span id="toastText">Conversation archived</span><button id="undoButton">Undo</button><button class="icon-button tiny" id="closeToast"><svg><use href="#i-close"/></svg></button></div>
     <div class="modal-backdrop" id="modalBackdrop"></div>

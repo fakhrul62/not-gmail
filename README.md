@@ -1,48 +1,39 @@
-# Gmail Interface Demo — Next.js
+# Not Gmail
 
-A Gmail-style mailbox running as a Next.js App Router application. The inbox uses local demo data, while the compose window can send real email from a connected Google account through the Gmail API.
+A Next.js Gmail client with real messages, folder counts, labels, server-side search, pagination, message bodies, attachment downloads, and sending. No sample mailbox is displayed, even when disconnected or an API request fails.
 
 ## Run
 
-Install dependencies and start the development server:
-
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Then open `http://localhost:3000`.
+Open http://localhost:3000. Copy `.env.example` to `.env.local` and configure your own OAuth credentials for local Gmail access. Production credentials are configured separately in hosting.
 
-For a production build:
+## Google configuration
+
+Enable the Gmail API. Use an External Google OAuth web client. Register the exact `/api/auth/google/callback` URL for each environment. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `SESSION_SECRET`, and `SUPPORT_EMAIL`.
+
+Declare `openid`, `email`, `https://www.googleapis.com/auth/gmail.readonly`, and `https://www.googleapis.com/auth/gmail.send` in Google Auth Platform Data Access. Existing send-only connections must reconnect and grant both reading and sending permissions. Use Production audience for public access and complete the applicable Google verification; reading is a restricted scope. See [GOOGLE-LAUNCH.md](GOOGLE-LAUNCH.md).
+
+## Mailbox behavior
+
+- One row per Gmail message, with all inbox categories, system folders, and user labels.
+- Inbox and user-label badges show Gmail unread message counts. Other folder badges show Gmail total message counts. These are message counts, not conversation counts.
+- Pages contain up to 25 messages and follow Gmail page tokens through the mailbox. Folder totals come from Gmail label details. Search and category views show the fetched range and whether more messages exist; Gmail's estimated result count is never presented as an exact total.
+- HTML messages render in an isolated sandbox with scripts and remote content blocked. Named attachments can be downloaded. Inline remote images remain blocked.
+- Read-only access leaves Gmail read status, stars, labels, and existing drafts unchanged. Open in Gmail provides mailbox management. Reading or rendering an email never sends one.
+- Compose, reply, and forward send only when the user clicks Send. Forwarding includes message text, not attachments. Local compose drafts are stored in this tab's session storage, not uploaded to Gmail drafts.
+- Mailbox data stays in page memory and server responses use no-store caching. Tokens are stored in an encrypted HTTP-only cookie; secrets and Google tokens are not returned in JSON.
+
+## Checks
 
 ```bash
+npm run check
+npm test
+npm run test:e2e
 npm run build
-npm start
 ```
 
-## Included interactions
-
-- Inbox categories, folders, labels, search, and advanced search
-- Reading messages, starring, selecting, pagination, and bulk actions
-- Archive, spam, trash, read/unread, snooze, and undo
-- Compose, reply, forward, save draft, discard, and real Gmail API sending
-- Collapsible navigation and responsive mobile layout
-- Quick settings for density and theme
-- Gemini demo panel and Calendar, Keep, Tasks, Contacts, and Add-ons panels
-- Profile, Google apps, tooltips, toast messages, and demo reset
-- Google account connect, switch, and sign-out controls
-
-All state is held in memory and resets when the page reloads. Use **More → Reset demo mailbox** to reset it without refreshing.
-
-## Enable real Gmail sending
-
-1. Create or select a project in [Google Cloud Console](https://console.cloud.google.com/).
-2. Enable the **Gmail API**.
-3. Configure the Google Auth Platform consent screen. While the app is in testing, add each Gmail account that may sign in as a test user.
-4. Create an OAuth client with application type **Web application**.
-5. Add `http://localhost:3000/api/auth/google/callback` and `https://not-gmail.vercel.app/api/auth/google/callback` as authorized redirect URIs.
-6. Copy `.env.example` to `.env.local` and set the Google client ID, client secret, redirect URI, and a long random session secret.
-
-Set the same variables in Vercel, using `https://not-gmail.vercel.app/api/auth/google/callback` as the production redirect URI. The app requests only Gmail send access plus basic account identity. Google tokens are stored in an encrypted, HTTP-only cookie; client and session secrets remain server-side.
-
-The App Router entry points are in `app/`. The original verified interface markup and browser behavior remain in `index.html` and `app.js`, loaded by the Next.js page and client initializer respectively.
+Browser/API tests use a separate local server and synthetic Google responses; they never access a real mailbox or send real email. On Windows they use installed Chrome; elsewhere install Playwright Chromium with `npx playwright install chromium`.

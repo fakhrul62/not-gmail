@@ -2,6 +2,13 @@ import crypto from "node:crypto";
 
 export const SESSION_COOKIE = "not_gmail_session";
 export const OAUTH_STATE_COOKIE = "not_gmail_oauth_state";
+export const READ_SCOPE = "https://www.googleapis.com/auth/gmail.readonly";
+export const SEND_SCOPE = "https://www.googleapis.com/auth/gmail.send";
+export const GOOGLE_SCOPES = `openid email ${READ_SCOPE} ${SEND_SCOPE}`;
+
+export function canReadMailbox(session) {
+  return Boolean(session?.scope?.split(" ").includes(READ_SCOPE));
+}
 
 export function gmailConfigured() {
   return Boolean(
@@ -93,7 +100,7 @@ export async function getAccessToken(session) {
 }
 
 export function safeReturnPath(value) {
-  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
+  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//") && !/[\\\r\n\t]/.test(value)
     ? value
     : "/";
 }

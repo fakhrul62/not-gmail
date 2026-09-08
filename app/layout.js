@@ -1,8 +1,8 @@
 import "../styles.css";
 
 export const metadata = {
-  title: "Inbox (3) - Demo Mail",
-  description: "A fully interactive Gmail-style mailbox demo built with Next.js."
+  title: "Not Gmail",
+  description: "Connect Gmail to read your messages, search your mailbox, and send email."
 };
 
 export const viewport = {

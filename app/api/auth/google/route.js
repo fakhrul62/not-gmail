@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import {
   OAUTH_STATE_COOKIE,
+  GOOGLE_SCOPES,
   callbackUrl,
   gmailConfigured,
   safeReturnPath
@@ -21,7 +22,7 @@ export async function GET(request) {
     client_id: process.env.GOOGLE_CLIENT_ID,
     redirect_uri: callbackUrl(request),
     response_type: "code",
-    scope: "openid email https://www.googleapis.com/auth/gmail.send",
+    scope: GOOGLE_SCOPES,
     access_type: "offline",
     prompt: "consent",
     include_granted_scopes: "true",

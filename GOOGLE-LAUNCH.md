@@ -12,16 +12,25 @@ In Google Auth Platform, configure:
 - Branding: Not Gmail, the real support email, the production `/connect` URL as the application homepage, and the production `/privacy` URL as the privacy policy.
 - Authorized domains: the domain you own and have verified in Google Search Console.
 - Web OAuth client: the exact production redirect URI above.
-- Data Access: `openid`, `email`, `https://www.googleapis.com/auth/gmail.send`.
+- Data Access: `openid`, `email`, `https://www.googleapis.com/auth/gmail.readonly`, `https://www.googleapis.com/auth/gmail.send`.
 
 ## Scope justification to submit
 
-Not Gmail lets a signed-in user compose a message and explicitly click Send to send that message from their own Gmail account. The gmail.send scope is needed to call users.messages.send. Identity scopes identify the connected account. No mailbox read, modify, or delete access is requested. Message content is processed to fulfill the user's send action; authorization tokens are stored in an encrypted HTTP-only cookie.
+Not Gmail lets a signed-in user compose a message and explicitly click Send to send that message from their own Gmail account. The gmail.send scope is needed to call users.messages.send. Identity scopes identify the connected account. The gmail.readonly scope is needed to list and search messages, display full message bodies and attachments, and read labels and exact mailbox counts. Metadata-only access cannot display message bodies. No modify or delete access is requested. Message content is processed to fulfill the user's send action; authorization tokens are stored in an encrypted HTTP-only cookie.
 
 ## Verification demonstration
 
-Record the production site and English Google consent flow, including the app name and OAuth client ID visible in the address bar. Show Connect Gmail, choosing an account, granting sending permission, returning to the app, and composing and sending a test message to an address you control. Show delivery in Gmail. Show the privacy page and account sign-out. Upload the recording as an unlisted YouTube video and provide its link in Google's Verification Center.
+Record the production site and English Google consent flow, including the app name and OAuth client ID visible in the address bar. Show Connect Gmail, choosing an account, granting reading and sending permission, returning to the app, displaying real mailbox messages and counts, searching, opening a message and downloading an attachment, and composing and sending a test message to an address you control. Show delivery in Gmail. Show the privacy page and account sign-out. Upload the recording as an unlisted YouTube video and provide its link in Google's Verification Center.
 
-Publish verified branding and submit sensitive scope verification through the Google Cloud project owner's account. Production publishing alone does not complete Google's review. Do not claim the app is verified until Google confirms approval.
+Publish verified branding and submit sensitive and restricted scope verification through the Google Cloud project owner's account. Production publishing alone does not complete Google's review. Do not claim the app is verified until Google confirms approval.
 
 Source: https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification
+
+
+## Upgrading existing connections
+
+Add `https://www.googleapis.com/auth/gmail.readonly` in Google Auth Platform Data Access. Existing users must reconnect to grant reading permission. Previously approved sending scopes do not authorize mailbox reading.
+
+The read-only Gmail scope is restricted. Because the server transmits restricted Gmail data, Google's restricted-scope verification and applicable security assessment requirements apply unless an exception is granted. Production status alone does not satisfy these requirements.
+
+Source: https://developers.google.com/workspace/gmail/api/auth/scopes

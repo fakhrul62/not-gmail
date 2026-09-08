@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import {
   OAUTH_STATE_COOKIE,
+  READ_SCOPE,
+  SEND_SCOPE,
   SESSION_COOKIE,
   callbackUrl,
   encryptSession,
@@ -48,7 +50,7 @@ export async function GET(request) {
   if (!tokenResponse.ok || !tokens.access_token) {
     return redirectWithStatus(request, "token-error", stored.returnTo);
   }
-  if (!tokens.scope?.split(" ").includes("https://www.googleapis.com/auth/gmail.send")) {
+  if (![READ_SCOPE, SEND_SCOPE].every(scope => tokens.scope?.split(" ").includes(scope))) {
     return redirectWithStatus(request, "missing-permission", stored.returnTo);
   }
 
@@ -57,11 +59,13 @@ export async function GET(request) {
     cache: "no-store"
   });
   const profile = profileResponse.ok ? await profileResponse.json() : {};
+  if (!profile.email) return redirectWithStatus(request, "token-error", stored.returnTo);
   const session = {
+    scope: tokens.scope,
     accessToken: tokens.access_token,
     refreshToken: tokens.refresh_token,
     expiresAt: Date.now() + (tokens.expires_in || 3600) * 1000,
-    email: profile.email || "Google account"
+    email: profile.email
   };
 
   const response = redirectWithStatus(request, "connected", stored.returnTo);

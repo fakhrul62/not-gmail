@@ -15,6 +15,8 @@ function renderSelection() {
   $("#selectAll").indeterminate = count > 0 && count < state.messages.length;
   $("#selectAll").disabled = state.loading || !state.messages.length;
   $("#selectionCount").textContent = count ? `${count} selected` : "";
+  $("[data-more='mark-read'] span").textContent = count ? "Mark selected as read" : "Mark all as read";
+  $("[data-more='mark-read']").disabled = state.loading || Boolean(state.markingRead);
   $$(".message-row").forEach(row => {
     const checked = selected.has(row.dataset.id);
     row.classList.toggle("selected", checked);
@@ -187,6 +189,29 @@ function openCompose(to = "", subject = "", body = "") {
 function draft() { return { to: $("#composeTo").value.trim(), subject: $("#composeSubject").value.trim(), body: $("#composeBody").innerText }; }
 function clearCompose() { $("#composeWindow").classList.remove("open", "minimized", "maximized"); $("#composeTo").value = ""; $("#composeSubject").value = ""; $("#composeBody").innerText = ""; sessionStorage.removeItem("not-gmail-draft"); }
 function saveLocalDraft() { sessionStorage.setItem("not-gmail-draft", JSON.stringify(draft())); }
+async function markAsRead() {
+  if (state.markingRead) return;
+  if (!state.account?.canModify) {
+    const content = draft(); if (Object.values(content).some(Boolean)) saveLocalDraft();
+    location.href = "/connect?permission=modify";
+    return;
+  }
+  const input = selected.size ? { ids: [...selected] } : { folder: state.folder, category: state.category, q: state.query };
+  state.markingRead = true; renderSelection();
+  let processed = 0;
+  try {
+    let more;
+    do {
+      showToast(processed ? `${processed} messages marked as read. Continuing…` : "Marking messages as read…");
+      const result = await api("/api/gmail/mark-read", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) });
+      processed += result.processed; more = result.hasMore;
+    } while (more);
+    showToast(processed ? `${processed} messages marked as read in Gmail.` : "No unread messages in this view.");
+  } catch (error) {
+    showToast(`${processed ? `${processed} messages were marked as read before the request stopped. ` : ""}${error.message}`);
+    if (error.authRequired) { state.account.canModify = false; connectionNotice(error.message); }
+  } finally { state.markingRead = false; await loadMailbox(); }
+}
 async function sendMessage() {
   const content = draft(); if (!content.to) { showToast("Add a recipient email address."); return; }
   $("#sendButton").disabled = true; $("#sendButton").textContent = "Sending…";
@@ -209,7 +234,7 @@ async function initialize() {
   } catch (error) { state.loading = false; state.error = error.message; renderMessages(); }
   const result = new URLSearchParams(location.search).get("gmail");
   if (result) {
-    const statuses = { connected: "Gmail connected.", denied: "Google authorization was cancelled.", "missing-permission": "Reconnect and allow both reading and sending email.", "invalid-state": "Sign-in expired. Please try again.", "token-error": "Google sign-in failed. Please try again.", "not-configured": "The site owner needs to configure Gmail." };
+    const statuses = { connected: "Gmail connected.", denied: "Google authorization was cancelled.", "missing-permission": "Reconnect and allow Gmail message management.", "invalid-state": "Sign-in expired. Please try again.", "token-error": "Google sign-in failed. Please try again.", "not-configured": "The site owner needs to configure Gmail." };
     showToast(statuses[result] || "Google connection updated."); history.replaceState({}, "", location.pathname);
   }
 }
@@ -229,6 +254,7 @@ $$("[data-select]").forEach(button => button.addEventListener("click", () => {
 $$("[data-more]").forEach(button => button.addEventListener("click", async () => {
   const action = button.dataset.more;
   closeFloating(); $("#moreButton").focus();
+  if (action === "mark-read") { await markAsRead(); return; }
   if (action === "clear") { selected.clear(); renderSelection(); }
   if (action === "copy") {
     const addresses = [...new Set(state.messages.filter(message => selected.has(message.id)).map(message => message.email))];

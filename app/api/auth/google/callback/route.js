@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   OAUTH_STATE_COOKIE,
-  READ_SCOPE,
-  SEND_SCOPE,
+  MODIFY_SCOPE,
   SESSION_COOKIE,
   callbackUrl,
   encryptSession,
@@ -50,7 +49,7 @@ export async function GET(request) {
   if (!tokenResponse.ok || !tokens.access_token) {
     return redirectWithStatus(request, "token-error", stored.returnTo);
   }
-  if (![READ_SCOPE, SEND_SCOPE].every(scope => tokens.scope?.split(" ").includes(scope))) {
+  if (!tokens.scope?.split(" ").includes(MODIFY_SCOPE)) {
     return redirectWithStatus(request, "missing-permission", stored.returnTo);
   }
 

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { encryptSession, READ_SCOPE, SEND_SCOPE } from "../../app/lib/gmail.js";
+import { encryptSession, READ_SCOPE, SEND_SCOPE, MODIFY_SCOPE } from "../../app/lib/gmail.js";
 
 process.env.SESSION_SECRET = "browser-test-session-key";
 async function connect(context, overrides = {}) {
@@ -71,7 +71,7 @@ test("empty and failed requests show actual states and refresh recovers", async 
 
 test("OAuth requests read access, rejects partial grants, refreshes tokens", async ({ page, context }) => {
   const start = await page.request.get("/api/auth/google", { maxRedirects: 0 });
-  expect(new URL(start.headers().location).searchParams.get("scope")).toContain(READ_SCOPE);
+  expect(new URL(start.headers().location).searchParams.get("scope")).toContain(MODIFY_SCOPE);
   const state = new URL(start.headers().location).searchParams.get("state");
   const callback = await page.request.get(`/api/auth/google/callback?state=${state}&code=send-only`, { maxRedirects: 0 });
   expect(callback.headers().location).toContain("missing-permission");
@@ -153,4 +153,36 @@ test("checkbox selection and More work without opening messages or leaking acros
   await page.locator('[data-more="unread"]').click();
   await expect(page.locator("#searchInput")).toHaveValue("is:unread");
   await expect(page.locator("#morePopover")).not.toBeVisible();
+});
+
+test("mark-read rejects read-only connections and offers reconnect", async ({ page, context }) => {
+  await connect(context); await page.goto("/");
+  await expect(page.locator(".message-row")).toHaveCount(25);
+  const denied = await page.request.post("/api/gmail/mark-read", { data: { folder: "Inbox" } });
+  expect(denied.status()).toBe(403); expect((await denied.json()).authRequired).toBe(true);
+  await page.locator("#moreButton").click();
+  await expect(page.locator('[data-more="mark-read"]')).toHaveText("Mark all as read");
+  await page.locator('[data-more="mark-read"]').click();
+  await expect(page).toHaveURL(/connect\?permission=modify/);
+});
+
+test("mark all as read processes every batch, updates Gmail counts, and handles selected IDs", async ({ page, context }) => {
+  await connect(context, { scope: MODIFY_SCOPE }); await page.goto("/");
+  await expect(page.locator(".message-row")).toHaveCount(25);
+  const forged = await page.request.post("/api/gmail/mark-read", { headers: { Origin: "https://another.example" }, data: { folder: "Inbox" } });
+  expect(forged.status()).toBe(403);
+  const invalid = await page.request.post("/api/gmail/mark-read", { data: { ids: ["../profile"] } }); expect(invalid.status()).toBe(400);
+  const batches = [];
+  page.on("response", async response => { if (response.url().endsWith("/api/gmail/mark-read")) batches.push(await response.json()); });
+  await page.locator("#moreButton").click(); await page.locator('[data-more="mark-read"]').click();
+  await expect(page.locator("#toastText")).toContainText("501 messages marked as read in Gmail.");
+  await expect(page.locator('[data-folder="Inbox"] .count')).toHaveText("0");
+  expect(batches.map(batch => batch.processed)).toEqual([500, 1]);
+  await expect(page.locator(".message-row.unread")).toHaveCount(0);
+  await page.locator(".message-row input").first().check();
+  await page.locator("#moreButton").click();
+  await expect(page.locator('[data-more="mark-read"]')).toHaveText("Mark selected as read");
+  const sent = page.waitForRequest(request => request.url().endsWith("/api/gmail/mark-read"));
+  await page.locator('[data-more="mark-read"]').click();
+  expect((await sent).postDataJSON()).toEqual({ ids: ["abc123"] });
 });

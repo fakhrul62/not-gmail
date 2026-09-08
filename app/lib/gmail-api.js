@@ -1,22 +1,24 @@
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, gmailConfigured, readSession, canReadMailbox, getAccessToken, encryptSession, sessionCookieOptions } from "./gmail";
+import { SESSION_COOKIE, gmailConfigured, readSession, canReadMailbox, canModifyMailbox, getAccessToken, encryptSession, sessionCookieOptions } from "./gmail";
 
 const json = (body, options = {}) => NextResponse.json(body, { ...options, headers: { "Cache-Control": "private, no-store" } });
 
-export async function withMailbox(request, action) {
+export async function withMailbox(request, action, { modify = false } = {}) {
   let auth;
   try {
     if (!gmailConfigured()) return json({ error: "Gmail is not configured on this site." }, { status: 503 });
     const session = readSession(request);
     if (!session) return json({ error: "Connect Gmail to view your mailbox.", authRequired: true }, { status: 401 });
+    if (modify && !canModifyMailbox(session)) return json({ error: "Reconnect Gmail and allow managing messages to mark mail as read.", authRequired: true }, { status: 403 });
     if (!canReadMailbox(session)) return json({ error: "Reconnect Gmail and allow reading your messages.", authRequired: true }, { status: 403 });
     try { auth = await getAccessToken(session); }
     catch { return json({ error: "Your Google connection expired. Please reconnect.", authRequired: true }, { status: 401 }); }
-    const api = async (path) => {
+    const api = async (path, options = {}) => {
       const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/${path}`, {
-        headers: { Authorization: `Bearer ${auth.accessToken}` }, cache: "no-store", signal: AbortSignal.timeout(20000)
+        ...options, headers: { "Content-Type": "application/json", Authorization: `Bearer ${auth.accessToken}` }, cache: "no-store", signal: AbortSignal.timeout(20000)
       });
-      const result = await response.json();
+      const text = await response.text();
+      const result = text ? JSON.parse(text) : {};
       if (!response.ok) {
         const reason = result.error?.errors?.[0]?.reason;
         const authRequired = response.status === 401 || reason === "insufficientPermissions";

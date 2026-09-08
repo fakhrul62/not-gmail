@@ -4,10 +4,15 @@ export const SESSION_COOKIE = "not_gmail_session";
 export const OAUTH_STATE_COOKIE = "not_gmail_oauth_state";
 export const READ_SCOPE = "https://www.googleapis.com/auth/gmail.readonly";
 export const SEND_SCOPE = "https://www.googleapis.com/auth/gmail.send";
-export const GOOGLE_SCOPES = `openid email ${READ_SCOPE} ${SEND_SCOPE}`;
+export const MODIFY_SCOPE = "https://www.googleapis.com/auth/gmail.modify";
+export const GOOGLE_SCOPES = `openid email ${MODIFY_SCOPE}`;
+
+export function canModifyMailbox(session) {
+  return Boolean(session?.scope?.split(" ").includes(MODIFY_SCOPE));
+}
 
 export function canReadMailbox(session) {
-  return Boolean(session?.scope?.split(" ").includes(READ_SCOPE));
+  return canModifyMailbox(session) || Boolean(session?.scope?.split(" ").includes(READ_SCOPE));
 }
 
 export function gmailConfigured() {

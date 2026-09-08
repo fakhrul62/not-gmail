@@ -31,6 +31,16 @@ test("real counts, labels, pagination, search and safe HTML rendering", async ({
   await page.goto("/");
   await expect(page.locator(".message-row")).toHaveCount(25);
   await expect(page.locator('[data-folder="Inbox"] .count')).toHaveText("7");
+  await page.evaluate(() => document.fonts.ready);
+  const fontClient = await context.newCDPSession(page);
+  await fontClient.send("DOM.enable"); await fontClient.send("CSS.enable");
+  const { root } = await fontClient.send("DOM.getDocument");
+  for (const selector of [".sender", "#composeButton span"]) {
+    const { nodeId } = await fontClient.send("DOM.querySelector", { nodeId: root.nodeId, selector });
+    const { fonts } = await fontClient.send("CSS.getPlatformFontsForNode", { nodeId });
+    expect(fonts.some(font => font.isCustomFont && /Google Sans/.test(font.familyName))).toBe(true);
+  }
+  await fontClient.detach();
   await expect(page.locator("#rangeButton")).toHaveText("1–25 of 26");
   await expect(page.locator("#labelNav")).toContainText('<Work & "Projects">');
   await expect(page.locator(".mail-footer")).toContainText("234 messages");

@@ -1,4 +1,14 @@
 import "../styles.css";
+import { Google_Sans } from "next/font/google";
+
+const googleSans = Google_Sans({
+  subsets: ["latin"],
+  weight: "variable",
+  axes: ["opsz"],
+  display: "swap",
+  adjustFontFallback: false,
+  variable: "--font-google-sans"
+});
 
 export const metadata = {
   title: "Not Gmail",
@@ -13,7 +23,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={googleSans.variable} suppressHydrationWarning>
       <body suppressHydrationWarning>{children}</body>
     </html>
   );

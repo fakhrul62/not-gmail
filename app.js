@@ -353,7 +353,7 @@ function connectGoogle() {
       body: $("#composeBody").innerText.trim()
     }));
   }
-  location.href = "/api/auth/google?returnTo=/";
+  location.href = "/connect";
 }
 
 async function updateGoogleAccount() {
@@ -380,6 +380,7 @@ function restoreComposeAfterGoogle() {
   const messagesByStatus = {
     connected: "Google account connected. Click Send to deliver your message.",
     denied: "Google authorization was cancelled",
+    "missing-permission": "Sending permission was not granted. Connect Gmail again and allow sending email.",
     "invalid-state": "Google sign-in expired. Please try again.",
     "token-error": "Google could not complete authorization",
     "not-configured": "Google OAuth credentials are not configured yet"

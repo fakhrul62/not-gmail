@@ -48,6 +48,9 @@ export async function GET(request) {
   if (!tokenResponse.ok || !tokens.access_token) {
     return redirectWithStatus(request, "token-error", stored.returnTo);
   }
+  if (!tokens.scope?.split(" ").includes("https://www.googleapis.com/auth/gmail.send")) {
+    return redirectWithStatus(request, "missing-permission", stored.returnTo);
+  }
 
   const profileResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
     headers: { Authorization: `Bearer ${tokens.access_token}` },

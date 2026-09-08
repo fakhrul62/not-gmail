@@ -18,6 +18,7 @@ function getDemoMarkup() {
 export default function HomePage() {
   return (
     <>
+      <div className="connection-notice">Not Gmail lets you send email with your Google account. <a href="/connect">Connect Gmail</a> · <a href="/privacy">Privacy</a></div>
       <div dangerouslySetInnerHTML={{ __html: getDemoMarkup() }} />
       <DemoInitializer />
     </>
